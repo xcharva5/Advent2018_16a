@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Advent2018_16a
@@ -13,40 +14,55 @@ namespace Advent2018_16a
             Processes = processes;
         }
 
-        public int AnalyzeProcesses()
+        public void AnalyzeProcesses()
         {
-            int threeOrMore = 0;
-
             foreach (InstructionProcess proc in Processes)
             {
                 // each process should go through all kinds of validation
-                int opCodesCounter = 0;
-                opCodesCounter += ProcessValidator.Addi(proc);
-                opCodesCounter += ProcessValidator.Addr(proc);
-                opCodesCounter += ProcessValidator.Bani(proc);
-                opCodesCounter += ProcessValidator.Banr(proc);
-                opCodesCounter += ProcessValidator.Bori(proc);
-                opCodesCounter += ProcessValidator.Borr(proc);
-                opCodesCounter += ProcessValidator.Eqir(proc);
-                opCodesCounter += ProcessValidator.Eqri(proc);
-                opCodesCounter += ProcessValidator.Eqrr(proc);
-                opCodesCounter += ProcessValidator.Gtir(proc);
-                opCodesCounter += ProcessValidator.Gtri(proc);
-                opCodesCounter += ProcessValidator.Gtrr(proc);
-                opCodesCounter += ProcessValidator.Muli(proc);
-                opCodesCounter += ProcessValidator.Mulr(proc);
-                opCodesCounter += ProcessValidator.Seti(proc);
-                opCodesCounter += ProcessValidator.Setr(proc);
-
-                threeOrMore += (opCodesCounter >= 3) ? 1 : 0;
-
-                if (opCodesCounter == 1)
-                {
-                    Console.WriteLine("Instruction ({0}) can be only 1 OP Code.", string.Join(",", proc.Instruction));
-                }
+                ProcessValidator.Addi(proc);
+                ProcessValidator.Addr(proc);
+                ProcessValidator.Bani(proc);
+                ProcessValidator.Banr(proc);
+                ProcessValidator.Bori(proc);
+                ProcessValidator.Borr(proc);
+                ProcessValidator.Eqir(proc);
+                ProcessValidator.Eqri(proc);
+                ProcessValidator.Eqrr(proc);
+                ProcessValidator.Gtir(proc);
+                ProcessValidator.Gtri(proc);
+                ProcessValidator.Gtrr(proc);
+                ProcessValidator.Muli(proc);
+                ProcessValidator.Mulr(proc);
+                ProcessValidator.Seti(proc);
+                ProcessValidator.Setr(proc);
             }
+        }
 
-            return threeOrMore;
+        public int GetProcessesWithThreeOrMore()
+        {
+            return Processes.Count(p => p.PossibleOpCodes.Count >= 3);
+        }
+
+        public void DisplayProcessesWithPossibleOPs()
+        {
+            Processes = Processes.OrderBy(p => p.PossibleOpCodes.Count).ToList();
+
+            foreach (InstructionProcess proc in Processes)
+            {
+                Console.WriteLine("{0} : {1}", proc.Instruction[0], string.Join(", ", proc.PossibleOpCodes));
+            }
+        }
+
+        public void SetNamesToOPCodes()
+        {
+            List<InstructionProcess> processes = Processes.Distinct().ToList(); //OrderBy(p => p.PossibleOpCodes.Count).ToList()
+
+            Dictionary<int, InstructionProcess.OPCodes> opWithNames = new Dictionary<int, InstructionProcess.OPCodes>();
+
+            foreach (InstructionProcess proc in processes)
+            {
+                Console.WriteLine("{0} : {1}", proc.Instruction[0], string.Join(", ", proc.PossibleOpCodes));
+            }
         }
     }
 }

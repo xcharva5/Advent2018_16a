@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Linq;
 
 namespace Advent2018_16a
 {
@@ -59,7 +60,7 @@ namespace Advent2018_16a
 
             file.Close();
 
-            return result;
+            return result.OrderBy(x => x.Instruction[0]).ToList();
         }
 
         private static bool IsNullOrEmpty(Array array)

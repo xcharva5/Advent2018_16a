@@ -8,7 +8,10 @@ namespace Advent2018_16a
         static void Main(string[] args)
         {
             ProcessAnalyzer pa = new ProcessAnalyzer(ProcessReader.LoadProcessesFromFile("../../../input.txt"));
-            Console.WriteLine("3+ possible OPCodes has {0} instrument processes", pa.AnalyzeProcesses());
+            pa.AnalyzeProcesses();
+            Console.WriteLine("There is {0} instruction processes with 3+ possible OP codes.", pa.GetProcessesWithThreeOrMore());
+            pa.DisplayProcessesWithPossibleOPs();
+
             Console.ReadLine();
 
 
