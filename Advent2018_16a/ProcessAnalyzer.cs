@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using MoreLinq;
 
 namespace Advent2018_16a
 {
@@ -55,13 +55,36 @@ namespace Advent2018_16a
 
         public void SetNamesToOPCodes()
         {
-            List<InstructionProcess> processes = Processes.Distinct().ToList(); //OrderBy(p => p.PossibleOpCodes.Count).ToList()
+            List<InstructionProcess> processes = Processes.DistinctBy(p1 => p1.Instruction[0]).OrderBy(p => p.PossibleOpCodes.Count).ToList(); 
 
             Dictionary<int, InstructionProcess.OPCodes> opWithNames = new Dictionary<int, InstructionProcess.OPCodes>();
 
             foreach (InstructionProcess proc in processes)
             {
                 Console.WriteLine("{0} : {1}", proc.Instruction[0], string.Join(", ", proc.PossibleOpCodes));
+            }
+
+            foreach (InstructionProcess proc in processes)
+            {
+                if (proc.PossibleOpCodes.Count == 1 && !opWithNames.ContainsKey(proc.Instruction[0]))
+                {
+                    InstructionProcess.OPCodes name = proc.PossibleOpCodes.First();
+                    opWithNames.Add(proc.Instruction[0], name);
+                    foreach (InstructionProcess pro in processes)
+                    {
+                        pro.PossibleOpCodes.Remove(name);
+                        Console.WriteLine("{0} removed from number {1}", name, pro.Instruction[0]);
+                    }
+                } else
+                {
+
+                }
+
+            }
+
+            foreach (var item in opWithNames)
+            {
+                Console.WriteLine("{0} : {1}", item.Key, item.Value);
             }
         }
     }

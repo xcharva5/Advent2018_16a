@@ -9,3 +9,5 @@ D:\AndrusPlayground\AdventOfCode\Advent2018_16a\Advent2018_16a\obj\Debug\netcore
 D:\AndrusPlayground\AdventOfCode\Advent2018_16a\Advent2018_16a\obj\Debug\netcoreapp3.0\Advent2018_16a.AssemblyInfo.cs
 D:\AndrusPlayground\AdventOfCode\Advent2018_16a\Advent2018_16a\obj\Debug\netcoreapp3.0\Advent2018_16a.dll
 D:\AndrusPlayground\AdventOfCode\Advent2018_16a\Advent2018_16a\obj\Debug\netcoreapp3.0\Advent2018_16a.pdb
+D:\AndrusPlayground\AdventOfCode\Advent2018_16a\Advent2018_16a\bin\Debug\netcoreapp3.0\MoreLinq.dll
+D:\AndrusPlayground\AdventOfCode\Advent2018_16a\Advent2018_16a\obj\Debug\netcoreapp3.0\Advent2018_16a.csproj.CopyComplete
