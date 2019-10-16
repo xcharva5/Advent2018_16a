@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using MoreLinq;
 
 namespace Advent2018_16a
@@ -8,10 +9,13 @@ namespace Advent2018_16a
     class ProcessAnalyzer
     {
         public List<InstructionProcess> Processes { get; set; }
+        public List<InstructionTest> Tests { get; set; }
+        public Dictionary<int, InstructionProcess.OPCodes> OpWithNames { get; set; }
 
-        public ProcessAnalyzer(List<InstructionProcess> processes)
+        public ProcessAnalyzer(List<InstructionProcess> processes, List<InstructionTest> tests)
         {
             Processes = processes;
+            Tests = tests;
         }
 
         public void AnalyzeProcesses()
@@ -57,35 +61,130 @@ namespace Advent2018_16a
         {
             List<InstructionProcess> processes = Processes.DistinctBy(p1 => p1.Instruction[0]).OrderBy(p => p.PossibleOpCodes.Count).ToList(); 
 
-            Dictionary<int, InstructionProcess.OPCodes> opWithNames = new Dictionary<int, InstructionProcess.OPCodes>();
+            OpWithNames = new Dictionary<int, InstructionProcess.OPCodes>();
 
             foreach (InstructionProcess proc in processes)
             {
-                Console.WriteLine("{0} : {1}", proc.Instruction[0], string.Join(", ", proc.PossibleOpCodes));
+                //Console.WriteLine("{0} : {1}", proc.Instruction[0], string.Join(", ", proc.PossibleOpCodes));
             }
 
-            foreach (InstructionProcess proc in processes)
+            while (processes.Any())
             {
-                if (proc.PossibleOpCodes.Count == 1 && !opWithNames.ContainsKey(proc.Instruction[0]))
-                {
-                    InstructionProcess.OPCodes name = proc.PossibleOpCodes.First();
-                    opWithNames.Add(proc.Instruction[0], name);
-                    foreach (InstructionProcess pro in processes)
-                    {
-                        pro.PossibleOpCodes.Remove(name);
-                        Console.WriteLine("{0} removed from number {1}", name, pro.Instruction[0]);
-                    }
-                } else
-                {
+                int opCodeNumber = -1;
+                InstructionProcess.OPCodes name = new InstructionProcess.OPCodes();
 
+                foreach (InstructionProcess proc in processes)
+                {
+                    if (proc.PossibleOpCodes.Count == 1 && !OpWithNames.ContainsKey(proc.Instruction[0]))
+                    {
+                        name = proc.PossibleOpCodes.First();
+                        opCodeNumber = proc.Instruction[0];
+                        OpWithNames.Add(opCodeNumber, name);
+                        processes.Remove(proc);
+                        break;
+                    }
                 }
 
+                processes.ForEach(p1 => p1.PossibleOpCodes.RemoveAll(pop => pop == name));  // RemoveAll(p => p.PossibleOpCodes. == name)
             }
 
-            foreach (var item in opWithNames)
+
+            OpWithNames = OpWithNames.OrderBy(op => op.Key).ToDictionary();
+
+            foreach (var item in OpWithNames)
             {
                 Console.WriteLine("{0} : {1}", item.Key, item.Value);
             }
+        }
+
+
+        public void RunTestingProgram()
+        {
+            int[] registers = { 0, 0, 0, 0 };
+
+            foreach (InstructionTest test in Tests)
+            {
+                Type type = typeof(ProcessExecutor);
+                MethodInfo method = type.GetMethod(OpWithNames[test.Instruction[0]].ToString());
+                ProcessExecutor c = new ProcessExecutor();
+                registers = (int[])method.Invoke(c, new object[] { registers, test });  //new object[] { null, null }
+
+                #region oldSwitch
+                /*switch (test.Instruction[0])
+                        {
+                            case 0:
+                                //Console.WriteLine("Test with OP: {0}", opWithNames[0].ToString());
+                                registers = ProcessExecutor.Eqri(registers, test);
+                                break;
+                            case 1:
+                                //Console.WriteLine("Test with OP: {0}", opWithNames[1].ToString());
+                                registers = ProcessExecutor.Bori(registers, test);
+                                break;
+                            case 2:
+                                //Console.WriteLine("Test with OP: {0}", opWithNames[2].ToString());
+                                registers = ProcessExecutor.Addi(registers, test);
+                                break;
+                            case 3:
+                                //Console.WriteLine("Test with OP: {0}", opWithNames[3].ToString());
+                                registers = ProcessExecutor.Bani(registers, test);
+                                break;
+                            case 4:
+                                //Console.WriteLine("Test with OP: {0}", opWithNames[4].ToString());
+                                registers = ProcessExecutor.Seti(registers, test);
+                                break;
+                            case 5:
+                                //Console.WriteLine("Test with OP: {0}", opWithNames[5].ToString());
+                                registers = ProcessExecutor.Eqrr(registers, test);
+                                break;
+                            case 6:
+                                //Console.WriteLine("Test with OP: {0}", opWithNames[6].ToString());
+                                registers = ProcessExecutor.Addr(registers, test);
+                                break;
+                            case 7:
+                                //Console.WriteLine("Test with OP: {0}", opWithNames[7].ToString());
+                                registers = ProcessExecutor.Gtri(registers, test);
+                                break;
+                            case 8:
+                                //Console.WriteLine("Test with OP: {0}", opWithNames[8].ToString());
+                                registers = ProcessExecutor.Borr(registers, test);
+                                break;
+                            case 9:
+                                //Console.WriteLine("Test with OP: {0}", opWithNames[9].ToString());
+                                registers = ProcessExecutor.Gtir(registers, test);
+                                break;
+                            case 10:
+                                //Console.WriteLine("Test with OP: {0}", opWithNames[10].ToString());
+                                registers = ProcessExecutor.Setr(registers, test);
+                                break;
+                            case 11:
+                                //Console.WriteLine("Test with OP: {0}", opWithNames[11].ToString());
+                                registers = ProcessExecutor.Eqir(registers, test);
+                                break;
+                            case 12:
+                                //Console.WriteLine("Test with OP: {0}", opWithNames[12].ToString());
+                                registers = ProcessExecutor.Mulr(registers, test);
+                                break;
+                            case 13:
+                                //Console.WriteLine("Test with OP: {0}", opWithNames[13].ToString());
+                                registers = ProcessExecutor.Muli(registers, test);
+                                break;
+                            case 14:
+                                //Console.WriteLine("Test with OP: {0}", opWithNames[14].ToString());
+                                registers = ProcessExecutor.Gtrr(registers, test);
+                                break;
+                            case 15:
+                                //Console.WriteLine("Test with OP: {0}", opWithNames[15].ToString());
+                                registers = ProcessExecutor.Banr(registers, test);
+                                break;
+                            default:
+                                Console.WriteLine("Something wrong");
+                                break;
+
+                        }*/ 
+                #endregion
+            }
+
+            Console.WriteLine("Final registers: {0}", string.Join("-", registers));
         }
     }
 }
