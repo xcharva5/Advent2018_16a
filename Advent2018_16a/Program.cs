@@ -12,8 +12,7 @@ namespace Advent2018_16a
 
             ProcessAnalyzer pa = new ProcessAnalyzer(pr.ResultProcesses, pr.ResultTests);
             pa.AnalyzeProcesses();
-            Console.WriteLine("There is {0} instruction processes with 3+ possible OP codes.", pa.GetProcessesWithThreeOrMore());
-            //pa.DisplayProcessesWithPossibleOPs();
+            pa.DisplayProcessesWithThreeOrMore();
             pa.SetNamesToOPCodes();
             pa.RunTestingProgram();
 

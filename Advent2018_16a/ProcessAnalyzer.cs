@@ -42,11 +42,12 @@ namespace Advent2018_16a
             }
         }
 
-        public int GetProcessesWithThreeOrMore()
+        public void DisplayProcessesWithThreeOrMore()
         {
-            return Processes.Count(p => p.PossibleOpCodes.Count >= 3);
+            Console.WriteLine("There is {0} instruction processes with 3+ possible OP codes.", Processes.Count(p => p.PossibleOpCodes.Count >= 3));
         }
 
+        #region REFACTOR
         public void DisplayProcessesWithPossibleOPs()
         {
             Processes = Processes.OrderBy(p => p.PossibleOpCodes.Count).ToList();
@@ -55,46 +56,44 @@ namespace Advent2018_16a
             {
                 Console.WriteLine("{0} : {1}", proc.Instruction[0], string.Join(", ", proc.PossibleOpCodes));
             }
-        }
+        } 
+        #endregion
 
         public void SetNamesToOPCodes()
         {
+            // uses MoreLinq to distinct object
             List<InstructionProcess> processes = Processes.DistinctBy(p1 => p1.Instruction[0]).OrderBy(p => p.PossibleOpCodes.Count).ToList(); 
 
             OpWithNames = new Dictionary<int, InstructionProcess.OPCodes>();
 
-            foreach (InstructionProcess proc in processes)
-            {
-                //Console.WriteLine("{0} : {1}", proc.Instruction[0], string.Join(", ", proc.PossibleOpCodes));
-            }
-
             while (processes.Any())
             {
-                int opCodeNumber = -1;
                 InstructionProcess.OPCodes name = new InstructionProcess.OPCodes();
 
                 foreach (InstructionProcess proc in processes)
                 {
+                    // if the proces has only 1 possibility and isn't recognised yet
                     if (proc.PossibleOpCodes.Count == 1 && !OpWithNames.ContainsKey(proc.Instruction[0]))
                     {
+                        // var name has to be out of the loop because I use it for removing of possibilities
                         name = proc.PossibleOpCodes.First();
-                        opCodeNumber = proc.Instruction[0];
-                        OpWithNames.Add(opCodeNumber, name);
+                        OpWithNames.Add(proc.Instruction[0], name);
                         processes.Remove(proc);
                         break;
                     }
                 }
 
-                processes.ForEach(p1 => p1.PossibleOpCodes.RemoveAll(pop => pop == name));  // RemoveAll(p => p.PossibleOpCodes. == name)
+                processes.ForEach(p => p.PossibleOpCodes.RemoveAll(pop => pop == name));
             }
 
-
-            OpWithNames = OpWithNames.OrderBy(op => op.Key).ToDictionary();
+            #region REFACTORING
+            /*OpWithNames = OpWithNames.OrderBy(op => op.Key).ToDictionary();
 
             foreach (var item in OpWithNames)
             {
                 Console.WriteLine("{0} : {1}", item.Key, item.Value);
-            }
+            } */
+            #endregion
         }
 
 
@@ -107,9 +106,9 @@ namespace Advent2018_16a
                 Type type = typeof(ProcessExecutor);
                 MethodInfo method = type.GetMethod(OpWithNames[test.Instruction[0]].ToString());
                 ProcessExecutor c = new ProcessExecutor();
-                registers = (int[])method.Invoke(c, new object[] { registers, test });  //new object[] { null, null }
+                registers = (int[])method.Invoke(c, new object[] { registers, test });
 
-                #region oldSwitch
+                #region REFACTORING
                 /*switch (test.Instruction[0])
                         {
                             case 0:
