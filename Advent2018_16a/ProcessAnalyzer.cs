@@ -103,6 +103,7 @@ namespace Advent2018_16a
 
             foreach (InstructionTest test in Tests)
             {
+                // replace switch by reflection
                 Type type = typeof(ProcessExecutor);
                 MethodInfo method = type.GetMethod(OpWithNames[test.Instruction[0]].ToString());
                 ProcessExecutor c = new ProcessExecutor();
@@ -184,6 +185,7 @@ namespace Advent2018_16a
             }
 
             Console.WriteLine("Final registers: {0}", string.Join("-", registers));
+            Console.ReadLine();
         }
     }
 }

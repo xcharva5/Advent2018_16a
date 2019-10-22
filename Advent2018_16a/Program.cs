@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Advent2018_16a
+﻿namespace Advent2018_16a
 {
     class Program
     {
@@ -15,10 +12,6 @@ namespace Advent2018_16a
             pa.DisplayProcessesWithThreeOrMore();
             pa.SetNamesToOPCodes();
             pa.RunTestingProgram();
-
-            Console.ReadLine();
-
-
         }
     }
 }
